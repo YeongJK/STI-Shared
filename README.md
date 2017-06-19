@@ -39,3 +39,39 @@ curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"chain":
 Delete Selected Filter Rule:
 
 curl -u admin:python -H "Content-Type: application/json" -X DELETE -i http://localhost:5000/todo/api/mikrotik/filterrule/delete/<numbers>
+
+# Firewall Masquerade NAT
+
+Create Masquerade NAT:
+
+curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"outinterface":"ether1"}' http://localhost:5000/todo/api/mikrotik/masqnat/create
+
+Print All Masquerade NATs:
+
+curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/masqnat/print
+
+Update Selected Masquerade NAT:
+
+curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"outinterface":"ether2"}' http://localhost:5000/todo/api/mikrotik/masqnat/update/<numbers>
+
+Delete Selected Masquerade NAT:
+
+curl -u admin:python -H "Content-Type: application/json" -X DELETE -i http://localhost:5000/todo/api/mikrotik/masqnat/delete/<numbers>
+
+# Firewall NAT Bypass
+
+Create NAT Bypass:
+
+curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"srcaddr":"10.10.10.0/24", "dstaddr":"20.20.20.0/24"}' http://localhost:5000/todo/api/mikrotik/natbypass/create
+
+Print All NAT Bypass:
+
+curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/natbypass/print
+
+Update Selected NAT Bypass:
+
+curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"srcaddr":"30.30.30.0/24", "dstaddr":"40.40.40.0/24"}' http://localhost:5000/todo/api/mikrotik/natbypass/update/<numbers>
+
+Delete Selected NAT Bypass:
+
+curl -u admin:python -H "Content-Type: application/json" -X DELETE -i http://localhost:5000/todo/api/mikrotik/natbypass/delete/<numbers>
