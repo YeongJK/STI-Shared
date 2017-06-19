@@ -1,7 +1,7 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, make_response, request, url_for
 from flask.ext.httpauth import HTTPBasicAuth
-import os, addrlistcrud, filtercrud, csv, json, subprocess, re
+import os, addrlistcrud, filtercrud, masqnatcrud, natbypasscrud, csv, json, subprocess, re
 
 mikrotik = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -140,6 +140,110 @@ def delete_rule(numbers):
 		output = f.read()
 		output2 = re.split('\n', output)
 	return jsonify({'Rule': output2, 'delete': True})
+
+#CREATE MASQ NAT
+#curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"outinterface":"ether1"}' http://localhost:5000/todo/api/mikrotik/masqnat/create
+@mikrotik.route('/todo/api/mikrotik/masqnat/create', methods=['POST'])
+def create_masqnat():
+	outinterface = request.json['outinterface']
+
+	subprocess.call(['./test.sh', 'createmasqnat', outinterface])
+
+	with open('file.txt') as f:
+		output = f.read()
+	
+	return jsonify({'outinterface': outinterface})
+
+#PRINT ALL MASQ NAT
+#curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/masqnat/print
+@mikrotik.route('/todo/api/mikrotik/masqnat/print', methods=['GET'])
+def get_masqnat():
+	subprocess.call(['./test.sh', 'printmasqnat'])
+
+	with open('file.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'NAT Rule(s)': output2})
+
+#UPDATE MASQ NAT
+#curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"outinterface":"ether2"}' http://localhost:5000/todo/api/mikrotik/masqnat/update/<numbers>
+@mikrotik.route('/todo/api/mikrotik/masqnat/update/<numbers>', methods=['PUT'])
+def update_masqnat(numbers):
+	outinterface = request.json['outinterface']
+
+    	subprocess.call(['./test.sh', 'updatemasqnat', numbers, outinterface])
+
+    	with open('file.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'Updated NAT Rule': output2})
+
+#DELETE MASQ NAT
+#curl -u admin:python -H "Content-Type: application/json" -X DELETE -i http://localhost:5000/todo/api/mikrotik/masqnat/delete/<numbers>
+@mikrotik.route('/todo/api/mikrotik/masqnat/delete/<numbers>', methods=['DELETE'])
+def delete_masqnat(numbers):
+	subprocess.call(['./test.sh', 'deletemasqnat', numbers])
+
+	with open('file.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'Deleted NAT Rule': output2, 'delete': True})
+
+#CREATE NAT BY PASS
+#curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"srcaddr":"10.10.10.0/24", "dstaddr":"20.20.20.0/24"}' http://localhost:5000/todo/api/mikrotik/natbypass/create
+@mikrotik.route('/todo/api/mikrotik/natbypass/create', methods=['POST'])
+def create_natbypass():
+	srcaddr = request.json['srcaddr']
+	dstaddr = request.json['dstaddr']
+
+	subprocess.call(['./test.sh', 'createnatbypass', srcaddr, dstaddr])
+
+	with open('file.txt') as f:
+		output = f.read()
+	
+	return jsonify({'srcaddr': srcaddr, 'dstaddr': dstaddr})
+
+#PRINT NAT BY PASS
+#curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/natbypass/print
+@mikrotik.route('/todo/api/mikrotik/natbypass/print', methods=['GET'])
+def get_natbypass():
+	subprocess.call(['./test.sh', 'printnatbypass'])
+
+	with open('file.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'NAT Rule(s)': output2})
+
+#UPDATE NAT BY PASS
+#curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"srcaddr":"30.30.30.0/24", "dstaddr":"40.40.40.0/24"}' http://localhost:5000/todo/api/mikrotik/natbypass/update/<numbers>
+@mikrotik.route('/todo/api/mikrotik/natbypass/update/<numbers>', methods=['PUT'])
+def update_natbypass(numbers):
+	srcaddr = request.json['srcaddr']
+	dstaddr = request.json['dstaddr']
+
+    	subprocess.call(['./test.sh', 'updatenatbypass', numbers, srcaddr, dstaddr])
+
+    	with open('file.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'Updated NAT Rule': output2})
+
+#DELETE NAT BY PASS
+#curl -u admin:python -H "Content-Type: application/json" -X DELETE -i http://localhost:5000/todo/api/mikrotik/natbypass/delete/<numbers>
+@mikrotik.route('/todo/api/mikrotik/natbypass/delete/<numbers>', methods=['DELETE'])
+def delete_natbypass(numbers):
+	subprocess.call(['./test.sh', 'deletenatbypass', numbers])
+
+	with open('file.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'Deleted NAT Rule': output2, 'delete': True})
 
 if __name__ == '__main__':
 	mikrotik.run(debug=True)

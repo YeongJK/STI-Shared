@@ -43,4 +43,38 @@ then
 elif [ "$choice" == "deletelist" ]
 then
 	python addrlistcrud.py deletelist $arguement1 > file.txt
+
+#firewall masq nat 
+elif [ "$choice" == "printmasqnat" ]
+then
+	python masqnatcrud.py printmasqnat > file.txt
+
+elif [ "$choice" == "createmasqnat" ]
+then
+	python masqnatcrud.py createmasqnat $arguement1 > file.txt
+
+elif [ "$choice" == "updatemasqnat" ]
+then
+	python masqnatcrud.py updatemasqnat $arguement1 $arguement2 > file.txt
+
+elif [ "$choice" == "deletemasqnat" ]
+then
+	python masqnatcrud.py deletemasqnat $arguement1 > file.txt
+
+#firewall bypass nat
+elif [ "$choice" == "printnatbypass" ]
+then
+	python natbypasscrud.py printnatbypass > file.txt
+
+elif [ "$choice" == "createnatbypass" ]
+then
+	python natbypasscrud.py createnatbypass $arguement1 $arguement2 > file.txt
+
+elif [ "$choice" == "updatenatbypass" ]
+then
+	python natbypasscrud.py updatenatbypass $arguement1 $arguement2 $arguement3 > file.txt
+
+elif [ "$choice" == "deletenatbypass" ]
+then
+	python natbypasscrud.py deletenatbypass $arguement1 > file.txt
 fi
