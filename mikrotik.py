@@ -21,10 +21,11 @@ def unauthorized():
 #CRUD FOR IP ADDRESSING
 
 
-@mikrotik.route('/todo/api/mikrotik/createip/<interface>', methods=['POST'])
+@mikrotik.route('/todo/api/mikrotik/createip', methods=['POST'])
 @auth.login_required
-def createip(interface):
+def createip():
     ip = request.json['ip']
+    interface = request.json['interface']
     subprocess.call(['./test.sh', 'createip', ip, interface])
     with open('file.txt') as f:
 	output = f.read()
@@ -42,22 +43,24 @@ def getip():
     return jsonify({'ip': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/updateip/<numbers>', methods=['PUT'])
+@mikrotik.route('/todo/api/mikrotik/updateip', methods=['PUT'])
 @auth.login_required
-def updateip(numbers):
-    address = request.json['address']
+def updateip():
+    number = request.json['number']
+    ip = request.json['ip']
     interface = request.json['interface']
-    subprocess.call(['./test.sh', 'updateip', numbers, address, interface])
+    subprocess.call(['./test.sh', 'updateip', number, ip, interface])
     with open('file.txt') as f:
 	output = f.read()
         output2 = re.split('\n', output)
     return jsonify({'ip': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/deleteip/<numbers>', methods=['DELETE'])
+@mikrotik.route('/todo/api/mikrotik/deleteip', methods=['DELETE'])
 @auth.login_required
-def deleteip(numbers):
-    subprocess.call(['./test.sh', 'deleteip', numbers])
+def deleteip():
+    number = request.json['number']
+    subprocess.call(['./test.sh', 'deleteip', number])
     with open('file.txt') as f:
 	output = f.read()
         output2 = re.split('\n', output)
@@ -118,9 +121,10 @@ def deletevlanall():
 
 #CRUD FOR VLAN ONLY
 
-@mikrotik.route('/todo/api/mikrotik/createvlan/<vlaninterface>', methods=['POST'])
+@mikrotik.route('/todo/api/mikrotik/createvlan', methods=['POST'])
 @auth.login_required
-def createvlan(vlaninterface):
+def createvlan():
+    vlaninterface = request.json['vlaninterface']
     vlanname = request.json['vlanname']
     vlanid = request.json['vlanid']
     subprocess.call(['./test.sh', 'createvlan', vlaninterface, vlanname, vlanid])
@@ -140,12 +144,13 @@ def readvlan():
     return jsonify({'vlan': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/updatevlan/<vlaninterface>', methods=['PUT'])
+@mikrotik.route('/todo/api/mikrotik/updatevlan', methods=['PUT'])
 @auth.login_required
-def updatevlan(vlaninterface):
+def updatevlan():
     vlannumber = request.json['vlannumber']
     vlanname = request.json['vlanname']
     vlanid = request.json['vlanid']
+    vlaninterface = request.json['vlaninterface']
     subprocess.call(['./test.sh', 'updatevlan', vlannumber, vlanname, vlanid, vlaninterface])
     with open('file.txt') as f:
         output = f.read()
@@ -153,10 +158,11 @@ def updatevlan(vlaninterface):
     return jsonify({'vlan': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/deletevlan/<numbers>', methods=['DELETE'])
+@mikrotik.route('/todo/api/mikrotik/deletevlan', methods=['DELETE'])
 @auth.login_required
-def deletevlan(numbers):
-    subprocess.call(['./test.sh', 'deletevlan', numbers])
+def deletevlan():
+    vlannumber = request.json['vlannumber']
+    subprocess.call(['./test.sh', 'deletevlan', vlannumber])
     with open('file.txt') as f:
         output = f.read()
         output2 = re.split('\n', output)
@@ -187,9 +193,10 @@ def readbridge():
     return jsonify({'bridge': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/updatebridge/<bridgenumber>', methods=['PUT'])
+@mikrotik.route('/todo/api/mikrotik/updatebridge', methods=['PUT'])
 @auth.login_required
-def updatebridge(bridgenumber):
+def updatebridge():
+    bridgenumber = request.json['bridgenumber']
     bridgename = request.json['bridgename']
     subprocess.call(['./test.sh', 'updatebridge', bridgenumber, bridgename])
     with open('file.txt') as f:
@@ -198,10 +205,11 @@ def updatebridge(bridgenumber):
     return jsonify({'bridge': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/deletebridge/<bridgenumbers>', methods=['DELETE'])
+@mikrotik.route('/todo/api/mikrotik/deletebridge', methods=['DELETE'])
 @auth.login_required
-def deletebridge(bridgenumbers):
-    subprocess.call(['./test.sh', 'deletebridge', bridgenumbers])
+def deletebridge():
+    bridgenumber = request.json['bridgenumber']
+    subprocess.call(['./test.sh', 'deletebridge', bridgenumber])
     with open('file.txt') as f:
         output = f.read()
         output2 = re.split('\n', output)
@@ -215,9 +223,9 @@ def deletebridge(bridgenumbers):
 @auth.login_required
 def createbridgeport():
     bridgeportname = request.json['bridgeportname']
-    bridgeinterface = request.json['bridgeinterface']
+    bridgevlaninterface = request.json['bridgevlaninterface']
     bridgeportinterface = request.json['bridgeportinterface']
-    subprocess.call(['./test.sh', 'createbridgeport', bridgeportname, bridgeinterface, bridgeportinterface])
+    subprocess.call(['./test.sh', 'createbridgeport', bridgeportname, bridgevlaninterface, bridgeportinterface])
     with open('file.txt') as f:
         output = f.read()
         output2 = re.split('\n', output)
@@ -234,9 +242,10 @@ def readbridgeport():
     return jsonify({'bridgeport': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/updatebridgeport/<bridgeportnumber>', methods=['PUT'])
+@mikrotik.route('/todo/api/mikrotik/updatebridgeport', methods=['PUT'])
 @auth.login_required
-def updatebridgeport(bridgeportnumber):
+def updatebridgeport():
+    bridgeportnumber = request.json['bridgeportnumber']
     bridgeportname = request.json['bridgeportname']
     bridgeportinterface = request.json['bridgeportinterface']
     subprocess.call(['./test.sh', 'updatebridgeport', bridgeportnumber, bridgeportname, bridgeportinterface])
@@ -246,9 +255,10 @@ def updatebridgeport(bridgeportnumber):
     return jsonify({'bridgeport': output2})
 
 
-@mikrotik.route('/todo/api/mikrotik/deletebridgeport/<bridgeportnumber>', methods=['DELETE'])
+@mikrotik.route('/todo/api/mikrotik/deletebridgeport', methods=['DELETE'])
 @auth.login_required
-def deletebridgeport(bridgeportnumber):
+def deletebridgeport():
+    bridgeportnumber = request.json['bridgeportnumber']
     subprocess.call(['./test.sh', 'deletebridgeport', bridgeportnumber])
     with open('file.txt') as f:
         output = f.read()

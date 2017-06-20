@@ -330,12 +330,12 @@ class ApiRos:
 	
     def createBridgePort(self, bridgename, vlaninterface, bridgeportinterface):
 	self.inputsentence = ["/interface/bridge/port/add"]
-	self.inputsentence.append("=bridge=" + bridgeportname)
+	self.inputsentence.append("=bridge=" + bridgename)
 	self.inputsentence.append("=interface=" + vlaninterface)
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
 	self.inputsentence = ["/interface/bridge/port/add"]
-	self.inputsentence.append("=bridge=" + bridgeportname)
+	self.inputsentence.append("=bridge=" + bridgename)
 	self.inputsentence.append("=interface=" + bridgeportinterface)
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
@@ -530,7 +530,7 @@ def main():
     elif sys.argv[1] == "deletevlan":
 	apiros.deleteVlan(sys.argv[2]);
     elif sys.argv[1] == "createbridge":
-	apiros.createBridge(sys.argv[1]);
+	apiros.createBridge(sys.argv[2]);
     elif sys.argv[1] == "readbridge":
 	apiros.readBridge();
     elif sys.argv[1] == "updatebridge":
