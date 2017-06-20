@@ -47,9 +47,10 @@ def printserver():
 
 	return jsonify({'DHCP Server' : output2})
 
-@mikrotik.route('/add/pool/<name>', methods=['POST'])
+@mikrotik.route('/add/pool', methods=['POST'])
 @auth.login_required
-def addpool(name):
+def addpool():
+	name = request.json['name']
 	range = request.json['range']
 	subprocess.call(['./dhcp.sh', 'addpool', name, range])
 	with open('addpool.txt') as f:
@@ -69,9 +70,10 @@ def addnetwork():
 
 	return jsonify({'Network' : output2})
 
-@mikrotik.route('/add/server/<interface>', methods=['POST'])
+@mikrotik.route('/add/server', methods=['POST'])
 @auth.login_required
-def addserver(interface):
+def addserver():
+	interface = request.json['interface']
 	poolname = request.json['poolname']
         subprocess.call(['./dhcp.sh', 'addserver', interface, poolname])
         with open('addserver.txt') as f:
@@ -80,9 +82,10 @@ def addserver(interface):
 
         return jsonify({'Server' : output2})
 
-@mikrotik.route('/update/pool/<number>', methods=['PUT'])
+@mikrotik.route('/update/pool', methods=['PUT'])
 @auth.login_required
-def updatepool(number):
+def updatepool():
+	number = request.json['number']
 	range = request.json['range']
         subprocess.call(['./dhcp.sh', 'updatepool', range, number])
         with open('updatepool.txt') as f:
@@ -91,9 +94,10 @@ def updatepool(number):
 
         return jsonify({'Pool' : output2})
 
-@mikrotik.route('/update/network/<number>', methods=['PUT'])
+@mikrotik.route('/update/network', methods=['PUT'])
 @auth.login_required
-def updatenetwork(number):
+def updatenetwork():
+	number = request.json['number']
 	address = request.json['address']
 	gateway = request.json['gateway']
         subprocess.call(['./dhcp.sh', 'updatenetwork', address, gateway, number])
@@ -103,9 +107,10 @@ def updatenetwork(number):
 
         return jsonify({'Network' : output2})
 
-@mikrotik.route('/update/server/<number>', methods=['PUT'])
+@mikrotik.route('/update/server', methods=['PUT'])
 @auth.login_required
-def updateserver(number):
+def updateserver():
+	number = request.json['number']
 	address = request.json['address']
         subprocess.call(['./dhcp.sh', 'updateserver', address, number])
         with open('updateserver.txt') as f:
@@ -114,9 +119,10 @@ def updateserver(number):
 
         return jsonify({'Server' : output2})
 
-@mikrotik.route('/delete/pool/<number>', methods=['DELETE'])
+@mikrotik.route('/delete/pool', methods=['DELETE'])
 @auth.login_required
-def delpool(number):
+def delpool():
+	number = request.json['number']
         subprocess.call(['./dhcp.sh', 'delpool', number])
         with open('delpool.txt') as f:
                 output = f.read()
@@ -124,9 +130,10 @@ def delpool(number):
 
         return jsonify({'Pool' : output2, 'Delete': True})
 
-@mikrotik.route('/delete/network/<number>', methods=['DELETE'])
+@mikrotik.route('/delete/network', methods=['DELETE'])
 @auth.login_required
-def delnetwork(number):
+def delnetwork():
+	number = request/json['number']
         subprocess.call(['./dhcp.sh', 'delnetwork', number])
         with open('delnetwork.txt') as f:
                 output = f.read()
@@ -134,9 +141,10 @@ def delnetwork(number):
 
         return jsonify({'Network' : output2, 'Delete': True})
 
-@mikrotik.route('/delete/server/<number>', methods=['DELETE'])
+@mikrotik.route('/delete/server', methods=['DELETE'])
 @auth.login_required
-def delIp(number):
+def delIp():
+	number = request.json['number']
 	subprocess.call(['./dhcp.sh', 'delserver', number])
 	with open('delserver.txt') as f:
 		output = f.read()
