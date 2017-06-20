@@ -3,6 +3,8 @@
 This is a STI Project based on the Mikrotik RouterOS, aimed at making a RESTFUL API for it which includes CRUD for several functions.
 The project utilizes components / applications such as JSON , the Mikrotik API as well as Flask.
 
+https://swaggerhub.com/apis/YeongJK/Mikrotik/1.0.0
+
 Sample Commands for using flask to curl command requests:
 
 IP ADDRESSING:
