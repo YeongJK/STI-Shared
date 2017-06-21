@@ -15,6 +15,18 @@ List of CRUDs:
 - Firewall Rules
 - NAT
 
+Please note:
+IP addresses of the following files (s.socket...) must be changed to fit the router IP
+As well as the username and passwords in the Login method.
+Flask files (E.g mikrotik.py) also have usernames and passwords for authentication purposes that can be changed accordingly.
+
+- addrlistcrud.py
+- api.py
+- api5.py
+- crud.py
+- dhcp.py
+- filtercrud.py
+- natcrud.py
 
 Sample Commands for using flask to curl command requests:
 
