@@ -5,42 +5,45 @@ The project utilizes components / applications such as JSON , the Mikrotik API a
 
 Sample Commands for using flask to curl command requests:
 
-IP ADDRESSING:
+DHCP:
 
-curl -i -H "Content-Type: application/json" -X POST -d '{"<address>/<subnet>"}' http://localhost:5000/todo/api/mikrotik/createip/<interface>
+Print Functions
 
-curl -i http://localhost:5000/todo/api/mikrotik/printip
 
-curl -i -H "Content-Type: application/json" -X PUT -d '{"address":"<address>", "interface":"<interface>"}' http://localhost:5000/todo/api/mikrotik/updateip/<number>
+Pool: curl -i http://localhost:5000/todo/api/mikrotik/print/pool
 
-curl -i -H "Content-Type: application/json" -X DELETE http://localhost:5000/todo/api/mikrotik/deleteip/<number>
+Network: curl -i http://localhost:5000/todo/api/mikrotik/print/network
 
-VLAN:
+Server: curl -i http://localhost:5000/todo/api/mikrotik/print/server
 
-curl -i -H "Content-Type: application/json" -X POST -d '{"vlanname":"<vlanname>", "vlanid":"<vlanid>", "vlanbridgename":"<vlanbridgename>", "vlantrafficinterface":"<vlantrafficinterface>"}POST http://localhost:5000/todo/api/mikrotik/createvlan/<interface>
 
-curl -i http://localhost:5000/todo/api/mikrotik/readvlan
+Add Functions
 
-curl -i -H "Content-Type: application/json" -X PUT -d '{"vlannumber":"<vlannumber>", "vlanname":"<vlanname>", "vlanid":"<vlanid>"}' http://localhost:5000/todo/api/mikrotik/updatevlan/<interface>
 
-curl -i -H "Content-Type: application/json" -X DELETE -d '{"vlannumber":"<vlannumber>", "vlanbridgenumber":"<vlanbridgenumber>"}' http://localhost:5000/todo/api/mikrotik/deletevlan
+Pool: curl -i -H "Content-Type: application/json" -X POST -d '{"name":"<name>", "range":"<range>"}' http://localhost:5000/todo/api/mikrotik/add/pool
 
-FIREWALL:
+Network: curl -i -H "Content-Type: application/json" -X POST -d '{"subnet":"<subnet>", "interface":"<interface>"}' http://localhost:5000/todo/api/mikrotik/add/network
 
-curl -i -H "Content-Type: application/json" -X POST -d '{"chain":"input", "action":"accept", "rejectw":"icmp-network-unreachable", "protocol":"icmp", "src":"10.10.10.0/24", "dst":"10.10.10.0/24", "log":"no"}' http://localhost:5000/todo/api/mikrotik/firewallrule/create 
+Server: curl -i -H "Content-Type: application/json" -X POST -d '{"interface":"<interface>", "poolname":"<poolname>"}' http://localhost:5000/todo/api/mikrotik/add/server
 
-curl -i http://localhost:5000/todo/api/mikrotik/firewallrule/print
 
-curl -i -H "Content-Type: application/json" -X PUT -d '{"chain":"input", "action":"drop", "rejectw":"icmp-network-unreachable", "protocol":"icmp", "src":"10.10.10.0/24", "dst":"10.10.10.0/24", "log":"no"}' http://localhost:5000/todo/api/mikrotik/firewallrule/update/1
+Update Functions
 
-curl -i http://localhost:5000/todo/api/mikrotik/firewallrule/delete/<numbers>
 
-USER:
+Pool: curl -i -H "Content-Type: application/json" -X PUT -d '{"number":"<number>", "range":"<range>"}' http://localhost:5000/todo/api/mikrotik/update/pool
 
-curl -i -H "Content-Type: application/json" -X POST -d '{"name":"<name>", "group":"<group>", "password", "<password>"}' http://localhost:5000/todo/api/mikrotik/createuser
+Network: curl -i -H "Content-Type: application/json" -X PUT -d '{"number":"<number>", "address":"<address>", "gateway":"<gateway>" }' http://localhost:5000/todo/api/mikrotik/update/network
 
-curl -i -H "http://localhost:5000/todo/api/mikrotik/printuser
+Server: curl -i -H "Content-Type: application/json" -X PUT -d '{"number":"<number>", "address":"<address>", "poolname":"<poolname>"}' http://localhost:5000/todo/api/mikrotik/update/server
 
-curl -i -H "Content-Type: application/json" -X PUT -d '{"nuser":"<nuser>", "group":"<group>", "password", "<password>"}' http://localhost:5000/todo/api/mikrotik/updateuser/<number>
 
-curl -i -X DELETE http://localhost:5000/todo/api/mikrotik/deleteuser/<numbers>
+Delete Functions
+
+
+Pool: curl -i -X DELETE -d '{"number":"<number>"}' http://localhost:5000/todo/api/mikrotik/delete/pool 
+
+Network: curl -i -X DELETE -d '{"number":"<number>"}' http://localhost:5000/todo/api/mikrotik/delete/network
+
+Server: curl -i -X DELETE -d '{"number":"<number>"}' httpL//localhost:5000/todo/api/mikrotik/delete/server
+
+
