@@ -254,6 +254,11 @@ class ApiRos:
         self.readSentence()
 
  	self.inputsentence = ["/interface/bridge/port/remove"]
+        self.inputsentence.append("=numbers=" + bridgeinterface)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+	self.inputsentence = ["/interface/bridge/port/remove"]
         self.inputsentence.append("=numbers=" + trafficinterface)
         self.writeSentence(self.inputsentence)
         self.readSentence()
@@ -477,7 +482,7 @@ class ApiRos:
 
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('10.10.10.1', 8728))  
+    s.connect(('20.20.20.1', 8728))  
     apiros = ApiRos(s);             
     apiros.login('admin', '');
     
