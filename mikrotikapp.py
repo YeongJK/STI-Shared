@@ -12,10 +12,10 @@ def get_password(username):
 		return 'python'
 	return None
 
-#ERROR HANDLER 401/403
+#ERROR HANDLER 401
 @auth.error_handler
 def unauthorized():
-	return make_response(jsonify({'error': 'Unauthorized access'}), 403)
+	return make_response(jsonify({'error': 'Unauthorized Access'}), 401)
 
 #ERROR HANDLER 400
 @mikrotik.errorhandler(400)
@@ -25,7 +25,12 @@ def not_found(error):
 #ERROR HANDLER 404
 @mikrotik.errorhandler(404)
 def not_found(error):
-	return make_response(jsonify({'error': 'Not found'}), 404)
+	return make_response(jsonify({'error': 'Not Found'}), 404)
+
+#ERROR HANDLER 405
+@mikrotik.errorhandler(405)
+def not_found(error):
+	return make_response(jsonify({'Error':'Invalid Method'}), 405)
 
 #CREATE LIST
 #curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"address":"20.20.20.0/24", "list":"20network"}' http://localhost:5000/todo/api/mikrotik/addrlist/create
@@ -39,8 +44,9 @@ def create_list():
 
 	with open('file.txt') as f:
 		output = f.read()
+		output2 = re.split('\n', output)
 	
-	return jsonify({'address': address, 'list': l})
+	return jsonify({'Addresslist Created:': output2})
 
 #PRINT ALL LISTS
 #curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/addrlist/print
@@ -102,8 +108,8 @@ def create_rule():
 
 	with open('file.txt') as f:
 		output = f.read()
-	
-	return jsonify({'chain': chain, 'action': action, 'reject-with': rejectw, 'protocol': protocol, 'source address list': src, 'destination address list': dst, 'log': log})
+		output2 = re.split('\n', output)
+	return jsonify({'Filter Rule': output2})
 
 #PRINT ALL RULES
 #curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/filterrule/print
@@ -191,8 +197,9 @@ def create_masqnat():
 
 	with open('file.txt') as f:
 		output = f.read()
+		output2 = re.split('\n', output)
 	
-	return jsonify({'outinterface': outinterface})
+	return jsonify({'outinterface': output2})
 
 #UPDATE MASQ NAT
 #curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"numbers":"1", "outinterface":"ether2"}' http://localhost:5000/todo/api/mikrotik/nat/updatemasqnat
@@ -222,8 +229,9 @@ def create_natbypass():
 
 	with open('file.txt') as f:
 		output = f.read()
+		output2 = re.split('\n', output)
 	
-	return jsonify({'srcaddr': srcaddr, 'dstaddr': dstaddr})
+	return jsonify({'Create NAT BYPASS': output2})
 
 #UPDATE NAT BY PASS
 #curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"numbers":"1", "srcaddr":"30.30.30.0/24", "dstaddr":"40.40.40.0/24"}' http://localhost:5000/todo/api/mikrotik/nat/updatenatbypass
@@ -241,6 +249,180 @@ def update_natbypass():
 		output2 = re.split('\n', output)
 
 	return jsonify({'Updated NAT Rule': output2})
+
+#IP ROUTE CRUD
+#READ IP ROUTE
+#curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/route/print
+@mikrotik.route('/todo/api/mikrotik/route/print', methods=['GET'])
+@auth.login_required
+def printRoute():
+	subprocess.call(['./weilun.sh', 'printRoute'])
+	with open('route.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+		
+	return jsonify({'PRINT ROUTE': output2})
+
+#CREATE IP ROUTE
+#curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"dst":"0.0.0.0", "src":"0.0.0.0", "gateway":"192.168.90.254"}' http://localhost:5000/todo/api/mikrotik/route/create
+@mikrotik.route('/todo/api/mikrotik/route/create', methods=['POST'])
+@auth.login_required
+def createRoute():
+	dst = request.json['dst']
+	src = request.json['src']
+	gateway = request.json['gateway']
+	subprocess.call(['./weilun.sh', 'createRoute', dst, src, gateway])
+	with open('route.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'IP ROUTE CREATED': output2})
+#UPDATE IP ROUTE
+#curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"numbers":"1", "dst":"0.0.0.0", "src":"0.0.0.0", "gateway":"192.168.90.1"}' http://localhost:5000/todo/api/mikrotik/route/update
+@mikrotik.route('/todo/api/mikrotik/route/update', methods=['PUT'])
+@auth.login_required
+def updateRoute():
+	numbers = request.json['numbers']
+	dst = request.json['dst']
+	src = request.json['src']
+	gateway = request.json['gateway']
+	subprocess.call(['./weilun.sh', 'updateRoute', numbers, dst, src, gateway])
+	with open('route.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'UPDATED ROUTE': output2})
+#DELETE IP ROUTE
+#curl -u admin:python -H "Content-Type: application/json" -X DELETE -i -d '{"numbers":"1"}' http://localhost:5000/todo/api/mikrotik/route/delete
+@mikrotik.route('/todo/api/mikrotik/route/delete', methods=['DELETE'])
+@auth.login_required
+def deleteRoute():
+	numbers = request.json['numbers']
+	subprocess.call(['./weilun.sh', 'deleteRoute', numbers])
+	with open('route.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'ROUTE DELETED': output2, 'delete':True})
+
+#IPSEC PEER CRUD
+
+#READ IPSEC PEER
+#curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/ipsec/peer/print
+@mikrotik.route('/todo/api/mikrotik/ipsec/peer/print', methods=['GET'])
+@auth.login_required
+def printPeer():
+	subprocess.call(['./weilun.sh', 'printPeer'])
+	with open('ipsecpeer.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+		
+	return jsonify({'PRINT IPSEC PEER': output2})
+
+#CREATE IPSEC PEER
+#curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"addr":"192.168.90.2", "port":"500", "secret":"test"}' http://localhost:5000/todo/api/mikrotik/ipsec/peer/create
+@mikrotik.route('/todo/api/mikrotik/ipsec/peer/create', methods=['POST'])
+@auth.login_required
+def createPeer():
+	addr = request.json['addr']
+	port = request.json['port']
+	secret = request.json['secret']
+	subprocess.call(['./weilun.sh', 'createPeer', addr, port, secret])
+	with open('ipsecpeer.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'IPSEC PEER CREATED':output2})
+
+#UPDATE IPSEC PEER
+#curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"numbers":"1", "addr":"192.168.90.2", "port":"500", "secret":"lol"}' http://localhost:5000/todo/api/mikrotik/ipsec/peer/update
+@mikrotik.route('/todo/api/mikrotik/ipsec/peer/update', methods=['PUT'])
+@auth.login_required
+def updatePeer():
+	numbers = request.json['numbers']
+	addr = request.json['addr']
+	port = request.json['port']
+	secret = request.json['secret']
+	subprocess.call(['./weilun.sh', 'updatePeer', numbers, addr, port, secret])
+	with open('ipsecpeer.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+
+	return jsonify({'UPDATED IPSEC PEER': output2})
+
+#DELETE IPSEC PEER
+#curl -u admin:python -H "Content-Type: application/json" -X DELETE -i -d '{"numbers":"1"}' http://localhost:5000/todo/api/mikrotik/ipsec/peer/delete
+@mikrotik.route('/todo/api/mikrotik/ipsec/peer/delete', methods=['DELETE'])
+@auth.login_required
+def deletePeer():
+	numbers = request.json['numbers']
+	subprocess.call(['./weilun.sh', 'deletePeer', numbers])
+	with open('ipsecpeer.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'IPSEC PEER DELETED': output2, 'Delete':True})
+
+#IPSEC POLICY CRUD
+
+#READ IPSEC POLICY
+#curl -u admin:python -H "Content-Type: application/json" -i http://localhost:5000/todo/api/mikrotik/ipsec/policy/print
+@mikrotik.route('/todo/api/mikrotik/ipsec/policy/print', methods=['GET'])
+@auth.login_required
+def printPolicy():
+	subprocess.call(['./weilun.sh', 'printPolicy'])
+	with open('ipsecpolicy.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)	
+	return jsonify({'PRINT IPSEC POLICY': output2})
+
+#CREATE IPSEC POLICY
+#curl -u admin:python -i -H "Content-Type: application/json" -X POST -d '{"srcaddr":"10.1.202.0/24", "srcport":"any", "dstaddr":"10.1.101.0/24", "dstport":"any", "sasrcaddr":"192.168.90.1", "sadstaddr":"192.168.90.2", "tunnel":"yes", "action":"encrypt", "proposal":"default"}' http://localhost:5000/todo/api/mikrotik/ipsec/policy/create
+@mikrotik.route('/todo/api/mikrotik/ipsec/policy/create', methods=['POST'])
+@auth.login_required
+def createPolicy():
+	srcaddr = request.json['srcaddr']
+	srcport = request.json['srcport']
+	dstaddr = request.json['dstaddr']
+	dstport = request.json['dstport']
+	sasrcaddr = request.json['sasrcaddr']
+	sadstaddr = request.json['sadstaddr']
+	tunnel = request.json['tunnel']
+	action = request.json['action']
+	proposal = request.json['proposal']
+	subprocess.call(['./weilun.sh', 'createPolicy', srcaddr, srcport, dstaddr, dstport, sasrcaddr, sadstaddr, tunnel, action, proposal])
+	with open('ipsecpolicy.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'IPSEC POLICY ADDED': output2})
+
+#UPDATE IPSEC POLICY
+#curl -u admin:python -i -H "Content-Type: application/json" -X PUT -d '{"numbers":"1", "srcaddr":"10.1.202.0/24", "srcport":"any", "dstaddr":"10.1.101.0/24", "dstport":"any", "sasrcaddr":"192.168.90.1", "sadstaddr":"192.168.90.2", "tunnel":"yes", "action":"encrypt", "proposal":"default"}' http://localhost:5000/todo/api/mikrotik/ipsec/policy/update=?
+@mikrotik.route('/todo/api/mikrotik/ipsec/policy/update', methods=['PUT'])
+@auth.login_required
+def updatePolicy():
+	numbers = request.json['numbers']
+	srcaddr = request.json['srcaddr']
+	srcport = request.json['srcport']
+	dstaddr = request.json['dstaddr']
+	dstport = request.json['dstport']
+	sasrcaddr = request.json['sasrcaddr']
+	sadstaddr = request.json['sadstaddr']
+	tunnel = request.json['tunnel']
+	action = request.json['action']
+	proposal = request.json['proposal']
+	subprocess.call(['./weilun.sh', 'updatePolicy', numbers, srcaddr, srcport, dstaddr, dstport, sasrcaddr, sadstaddr, tunnel, action, proposal])
+	with open('ipsecpolicy.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'UPDATED IPSEC POLICY': output2})
+
+#DELETE IPSEC POLICY
+#curl -u admin:python -H "Content-Type: application/json" -X DELETE -i -d '{"numbers":"1"}' http://localhost:5000/todo/api/mikrotik/ipsec/policy/delete
+@mikrotik.route('/todo/api/mikrotik/ipsec/policy/delete', methods=['DELETE'])
+@auth.login_required
+def deletePolicy():
+	numbers = request.json['numbers']
+	subprocess.call(['./weilun.sh', 'deletePolicy', numbers])
+	with open('ipsecpolicy.txt') as f:
+		output = f.read()
+		output2 = re.split('\n', output)
+	return jsonify({'IPSEC POLICY DELETED': output2, 'Delete':True})
 
 if __name__ == '__main__':
 	mikrotik.run(debug=True)
