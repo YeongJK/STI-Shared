@@ -11,6 +11,7 @@ argument7=$8
 argument8=$9
 argument9=${10}
 argument10=${11}
+
 #IP ROUTE
 if [ "$choice" == "printRoute" ]
 then
@@ -18,11 +19,11 @@ then
 
 elif [ "$choice" == "createRoute" ]
 then
-	python api.py createRoute $argument1 $argument2 $argument3 > route.txt
+	python api.py createRoute $argument1 > route.txt
 
 elif [ "$choice" == "updateRoute" ]
 then 
-        python api.py updateRoute $argument1 $argument2 $argument3 $argument4 > route.txt
+        python api.py updateRoute $argument1 $argument2 > route.txt
 elif [ "$choice" == "deleteRoute" ]
 then 
         python api.py deleteRoute $argument1 > route.txt

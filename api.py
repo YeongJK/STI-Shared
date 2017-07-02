@@ -133,10 +133,8 @@ class ApiRos:
         return ret
 
 #IP ROUTE
-    def addRoute(self, dst, src, gateway):
+    def addRoute(self, gateway):
         self.inputsentence = ["/ip/route/add"]
-        self.inputsentence.append("=dst-address=" + dst)
-	self.inputsentence.append("=pref-src=" + src)
         self.inputsentence.append("=gateway=" + gateway)
         self.writeSentence(self.inputsentence)
         self.readSentence()
@@ -161,11 +159,9 @@ class ApiRos:
         self.writeSentence(self.inputsentence)
         self.readSentence()
 
-    def updateRoute(self, number, dst, source, gateway):
+    def updateRoute(self, number, gateway):
 	self.inputsentence = ["/ip/route/set"]
 	self.inputsentence.append("=numbers=" + number)
-	self.inputsentence.append("=dst-address=" + dst)
-	self.inputsentence.append("=pref-src=" + source)
 	self.inputsentence.append("=gateway=" + gateway)
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
@@ -221,6 +217,7 @@ class ApiRos:
 	self.inputsentence.append("=tunnel=" + tunnel)
 	self.inputsentence.append("=action=" + action)
 	self.inputsentence.append("=proposal=" + proposal)
+	self.inputsentence.append("=disabled=no")
         self.writeSentence(self.inputsentence)
         self.readSentence()
 
@@ -261,7 +258,7 @@ class ApiRos:
 
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(('20.20.20.1', 8728))  
+    s.connect(('10.10.10.1', 8728))  
     apiros = ApiRos(s);             
     apiros.login('admin', '');
     
@@ -269,9 +266,9 @@ def main():
     if sys.argv[1] == "printRoute":
 	apiros.printRoute();
     elif sys.argv[1] == "createRoute":
-	apiros.addRoute(sys.argv[2], sys.argv[3], sys.argv[4]);
+	apiros.addRoute(sys.argv[2]);
     elif sys.argv[1] == "updateRoute":
-	apiros.updateRoute(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
+	apiros.updateRoute(sys.argv[2], sys.argv[3]);
     elif sys.argv[1] == "deleteRoute":
 	apiros.deleteRoute(sys.argv[2]);
     #IPSEC PEER
@@ -294,4 +291,4 @@ def main():
 	apiros.deletePolicy(sys.argv[2]);
 
 if __name__ == '__main__':
-	main()
+    main()
